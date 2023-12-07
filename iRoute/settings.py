@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-bxq5=p-75#e19zeq%(*^fjfs^g0ab3f9817v6m9w7nj1r6vj#j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['iroutedemo.azurewebsites.net/','localhost']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'mainapp'
 ]
 
 MIDDLEWARE = [
