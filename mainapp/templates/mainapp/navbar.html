@@ -1,41 +1,44 @@
 {% load static %}
 
-<style>
-    .nav-link img {
-      max-width: 8vw;
-      max-height: 100%;
-    }
-    #hello-msg{
-     font-size: 18px;
-     color: #000000;
-     margin-right: 2%; 
-    }
-</style>
+<nav class="navbar navbar-expand-lg navbar-light">
+  <a class="navbar-brand m-3" href="/">
+    <img src="{% static 'mainapp/images/nav_logo.png' %}" height="50px" style="margin:1%;" alt="Logo">
+  </a>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin-left: 5%;">
-    <a class="nav-link" href="/"><img src="{% static 'mainapp/images/nav_logo.png' %}" alt="Logo" width="50%"></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="#">Features</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            BICIMAD
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#">Status map</a>
-            <a class="dropdown-item" href="#">Assistant</a>
-          </div>
-        </li>
-      </ul>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+
+  <div class="collapse navbar-collapse" id="navbar-menu">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="map">Interactive Map</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="route">Route planner</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="search_stop">Stop Information</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Bicimad
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="bicimad_status">Bicimad Map</a>
+          <a class="dropdown-item" href="bicimad_ui">Bicimad Assistant</a>
+        </div>
+      </li>
+
+    </ul>
+    <div class="ml-auto text-right"> <!-- Utilizamos la clase ml-auto para mover los elementos a la derecha -->
+      <div id="hello-msg" class="mr-3">Hello, {{request.user}}</div>
+      {% if not user.is_authenticated %}
+        <a class="nav-link" href="login">Login</a>
+      {% else %}
+        <a class="nav-link" href="logout">Logout&nbsp;({{request.user}})</a>
+      {% endif %}
     </div>
-    <span id="hello-msg">Hello, {{request.user}} </span>
-    <span id="hello-msg"><a href="{% url 'logout' %}">Logout</span>
-  </nav>
+  </div>
+</nav>

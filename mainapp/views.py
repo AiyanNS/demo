@@ -2,6 +2,8 @@ from django.shortcuts import render, HttpResponse,redirect
 from django.contrib import messages
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+
 # Create your views here.
 
 from .forms import CreateUserForm
@@ -49,6 +51,11 @@ def route(request):
 def bicimad_status(request):
     return HttpResponse("bicimad")
 
+def search_stop(request):
+    if request.method=='POST':
+        stop_number=request.POST.get('stop_number','')
+        return redirect(reverse('iroute:stop_detail', kwargs={'stop_number': stop_number}))
+    return render(request,'mainapp/search_stop.html')
 
 @login_required(login_url='login')
 def bicimad_ui(request):

@@ -1,6 +1,10 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
 {% block content %}
-<img src="{% static 'mainapp/images/logo.png' %}"
-    style="display: block; margin: 0 auto;">
+    <div id='content'>
+        <h1 style="text-align: center;"><strong><span style='color: rgb(238, 1, 1); font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;'>Public Transport Services- Comunidad de Madrid</span></strong></h1>
+        <p class="lead" style="text-align: center;">Thank you for counting on us.</p>
+        <div style="text-align: center;">
+            <img src="{% static 'mainapp/images/inicio.jpg' %}" width="500" height="300">
+        </div>
 {% endblock%}
