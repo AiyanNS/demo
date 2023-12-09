@@ -75,14 +75,5 @@
             <p>Tiempo de espera: <span id="infoRT">{{ text }}</span></p>
         </div>
     </div>
-    <script>
-        var socket = new WebSocket('ws://localhost:8000/ws/some_url/');
-        socket.onmessage = function(event) {
-            var data = JSON.parse(event.data);
-            console.log(data);
-            document.querySelector('#infoRT').innerText = data.message;
-        };
-        
-    </script>
     {% endblock %}
     
