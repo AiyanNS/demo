@@ -122,7 +122,7 @@ STATIC_URL = 'static/mainapp/'
 MEDIA_URL='/images/'
 
 STATICFILES_DIR=[
-    os.path.join(BASE_DIR,'static/mainapp')
+    os.path.join(BASE_DIR,'static/mainapp/')
 ]
 
 # Default primary key field type
@@ -130,4 +130,4 @@ STATICFILES_DIR=[
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['https://iroutedemo.azurewebsites.net','https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['iroutedemo.azurewebsites.net']
