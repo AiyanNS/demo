@@ -1,0 +1,105 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+{% block content %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+  <style>
+    #map {
+      height: 50vh;
+      margin: 5%;
+    }
+
+    form {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    label {
+      margin-bottom: 5px;
+    }
+
+    input {
+      margin-bottom: 15px;
+      padding: 8px;
+      width: 250px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+  <div id="map"></div>
+  <form id="routeForm">
+    <label for="start">Starting point:</label>
+    <input type="text" id="start" name="start" placeholder="Actual location">
+
+    <label for="destination">Destination:</label>
+    <input type="text" id="destination" name="destination" placeholder="">
+
+    <button type="button" onclick="calculateRoute()">Buscar Ruta</button>
+  </form>
+
+  <script>
+    var map = L.map('map').setView([40.7128, -74.0060], 13); // Nueva York
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    var control = L.Routing.control({
+      waypoints: [
+        L.latLng(40.7128, -74.0060) // Punto de partida (Nueva York)
+      ],
+      routeWhileDragging: true
+    }).addTo(map);
+
+    function calculateRoute() {
+      var start = document.getElementById('start').value;
+      var destination = document.getElementById('destination').value;
+
+      // Utilizar el servicio de geocodificación de Nominatim
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(start)}`)
+        .then(response => response.json())
+        .then(startData => {
+          if (startData.length > 0) {
+            var startLatLng = L.latLng(startData[0].lat, startData[0].lon);
+
+            // Utilizar el servicio de geocodificación de Nominatim para el destino
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(destination)}`)
+              .then(response => response.json())
+              .then(destinationData => {
+                if (destinationData.length > 0) {
+                  var destinationLatLng = L.latLng(destinationData[0].lat, destinationData[0].lon);
+
+                  // Actualizar waypoints y recalcular la ruta
+                  control.setWaypoints([startLatLng, destinationLatLng]);
+                } else {
+                  alert('Destino no encontrado. Por favor, ingrese un destino válido.');
+                }
+              })
+              .catch(error => {
+                console.error('Error en la geocodificación del destino:', error);
+              });
+          } else {
+            alert('Punto de partida no encontrado. Por favor, ingrese un punto de partida válido.');
+          }
+        })
+        .catch(error => {
+          console.error('Error en la geocodificación del punto de partida:', error);
+        });
+    }
+  </script>
+{% endblock %}

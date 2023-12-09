@@ -1,0 +1,88 @@
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="Nuevo_Hash_SHA-384" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Stop Detail</title>
+    <style>
+        h1 {
+            color: #0000; /* Cambia el color del título según tus preferencias */
+        }
+
+        #content-container {
+            display: flex;
+            margin: auto;
+            align-items: center;
+            justify-content: space-around;
+            width: 80vh;  /* Ajusta el ancho según tu preferencia */
+        }
+
+        #map-container {
+            width: 50vh;  /* Esto hará que el mapa ocupe la mitad derecha */
+        }
+
+        .high-score {
+            color: gold;
+        }
+        
+        .medium-score {
+            color: silver;
+        }
+        
+        .low-score {
+            color: gray;
+        }
+        #other-content {
+            background-color: #ffd9d9; /* Cambia el color de fondo según tus preferencias */
+            border: 1px solid #ddd; /* Agrega bordes según tus preferencias */
+            padding: 20px; /* Ajusta según sea necesario */
+        }
+
+        .circle {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 24px;
+            margin: 20px; /* Ajusta el espacio alrededor del círculo */
+        }
+        
+    </style>
+</head>
+{% extends 'mainapp/base.html' %}
+{% load static %}
+{% block content %}
+    <div id="content-container">
+        <div id="map-container">
+            {{ mapa_html | safe }}
+        </div>
+
+        <div id="other-content">
+            <h1>Bus Stop Detail for Stop Number {{ stop_number }}</h1>
+            
+            <!-- Agrega información de datosParada -->
+            <p>Nombre: {{ nombre }}</p>
+            <p>Líneas: <i class="fas fa-bus"></i> {{ lineas }}</p>
+            {% if puntAcondicionamiento %}
+                <p>Puntuación de Acondicionamiento de Viajeros: 
+                    <span class="circle" style="background-color: {% if puntAcondicionamiento >= 4 %}green{% elif puntAcondicionamiento >= 2 %}yellow{% else %}red{% endif %}">
+                        {{ puntAcondicionamiento }}
+                    </span>
+                </p>
+            {% endif %}
+            <p>Tiempo de espera: <span id="infoRT">{{ text }}</span></p>
+        </div>
+    </div>
+    <script>
+        var socket = new WebSocket('ws://localhost:8000/ws/some_url/');
+        socket.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            console.log(data);
+            document.querySelector('#infoRT').innerText = data.message;
+        };
+        
+    </script>
+    {% endblock %}
+    
