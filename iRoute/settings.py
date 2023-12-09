@@ -130,4 +130,4 @@ STATICFILES_DIR=[
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['iroutedemo.azurewebsites.net']
+CSRF_TRUSTED_ORIGINS = ['https://iroutedemo.azurewebsites.net/']

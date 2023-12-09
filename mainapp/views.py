@@ -26,7 +26,7 @@ def login_page(request):
 
 def logout_user(request):
     logout(request)
-    return redirect('login')
+    return redirect('home')
 
 def register(request):
     form = CreateUserForm()
@@ -41,7 +41,6 @@ def register(request):
     context = {'form':form}
     return render(request,'mainapp/register.html',context)
 
-
 def home(request):
     return render(request,'mainapp/home.html')
 
@@ -55,6 +54,10 @@ def route(request):
     return render(request,'mainapp/route.html')
 
 #@login_required(login_url='login')
+def favourite(request):
+    return render(request,'')
+
+
 def bicimad_ui(request):
     return HttpResponse('bicimadUI')
 

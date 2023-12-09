@@ -18,6 +18,11 @@
       <li class="nav-item">
         <a class="nav-link" href="search_stop">Stop Information</a>
       </li>
+      {% if user.is_authenticated %}
+      <li class="nav-item">
+        <a class="nav-link" href="search_stop">Saved stops</a>
+      </li>
+      {% endif %}
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Bicimad
@@ -25,8 +30,10 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="bicimad_status">Bicimad Map</a>
           <a class="dropdown-item" href="bicimad_ui">Bicimad Assistant</a>
+          <a class="dropdown-item" href="bicimad_ui">Saved stations</a>
         </div>
       </li>
+
 
     </ul>
   </div>
