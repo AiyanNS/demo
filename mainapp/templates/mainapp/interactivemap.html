@@ -4,15 +4,46 @@
     <title>Mapa de Marcadores</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
+
 {% extends 'mainapp/base.html' %}
 {% block title %}Mapa de Marcadores{% endblock %}
 
 {% block content %}
-    <h1>Contenido de la Lista</h1>
-    
-    <ul>
-        {% for station in my_list %}
-            <li>{{ station.id }}</li>
-        {% endfor %}
-    </ul>
+    <div id="map" style="height: 70vh; margin: 5%;"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        var map = L.map('map').setView([40.4168, -3.7038], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var markersLayer = L.layerGroup().addTo(map);
+
+        var my_list = JSON.parse('{{ my_list|escapejs|safe }}');
+        console.log(my_list);
+
+        for (var i = 0; i < my_list.length; i++) {
+            var obj = my_list[i];
+            var marker = L.marker([obj.latitude, obj.longitude]);
+
+            markersLayer.addLayer(marker);
+
+            var popupContent = '<div>';
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    popupContent += '<p><strong>' + key + ':</strong> ' + obj[key] + '</p>';
+                }
+            }
+            popupContent += '</div>';
+
+            marker.bindPopup(popupContent).on('click', function () {
+                this.openPopup();
+            });
+        }
+
+        L.control.layers(null, { 'Marcadores': markersLayer }).addTo(map);
+    </script>
 {% endblock %}

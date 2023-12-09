@@ -39,15 +39,17 @@ def register(request):
             messages.success(request,'Account was created for '+ user)
             return redirect('login')
     context = {'form':form}
-    return render(request,'mainapp/interactivemap.html',context)
+    return render(request,'mainapp/register.html',context)
 
 
 def home(request):
     return render(request,'mainapp/home.html')
 
 def interactive_map(request):
-
-    return render(request,'mainapp/interactivemap.html')
+    df=pd.read_csv('EMT_map.csv',delimiter=',')
+    df=df.to_dict(orient='records')
+    context={'my_list':json.dumps(df)}
+    return render(request,'mainapp/interactivemap.html',context)
 
 def route(request):
     return render(request,'mainapp/route.html')
