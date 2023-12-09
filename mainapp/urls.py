@@ -10,7 +10,8 @@ urlpatterns=[
     path('map', views.interactive_map, name="map"),
     path('route', views.route, name="route"),
     path('search_stop', views.search_stop, name="stop"),
-    path('<str:stop_number>', views.stop_detail, name='stop_detail'),
     path('bicimad_status', views.bicimad_status, name="bicimad_status"),
-    path('bicimad_ui', views.bicimad_ui, name="bicimad_ui")
+    path('bicimad_ui', views.bicimad_ui, name="bicimad_ui"),
+    path('<str:stop_number>', views.stop_detail, name='stop_detail')
+
 ]

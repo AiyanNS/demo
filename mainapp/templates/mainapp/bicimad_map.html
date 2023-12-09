@@ -1,0 +1,40 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Marcadores</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+{% extends 'mainapp/base.html' %}
+{% block title %}Mapa de Marcadores{% endblock %}
+
+{% block content %}
+    <div id="map" style="height: 70vh; margin: 5%;"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        var map = L.map('map').setView([40.4168, -3.7038], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var my_list = JSON.parse('{{ my_list|escapejs|safe }}');
+        console.log(my_list);  // Verifica si los datos se están pasando correctamente
+
+        for (var i = 0; i < my_list.length; i++) {
+            var obj = my_list[i];
+            console.log(obj.latitude, obj.longitude);  // Verifica si las coordenadas son válidas
+
+            var marker = L.marker([obj.latitude, obj.longitude]).addTo(map);
+            var popupContent = '<div>';
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    popupContent += '<p><strong>' + key + ':</strong> ' + obj[key] + '</p>';
+                }
+            }
+            popupContent += '</div>';
+            marker.bindPopup(popupContent);
+        }
+    </script>
+{% endblock %}

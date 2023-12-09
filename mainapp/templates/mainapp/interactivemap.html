@@ -1,0 +1,18 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Marcadores</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+{% extends 'mainapp/base.html' %}
+{% block title %}Mapa de Marcadores{% endblock %}
+
+{% block content %}
+    <h1>Contenido de la Lista</h1>
+    
+    <ul>
+        {% for station in my_list %}
+            <li>{{ station.id }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

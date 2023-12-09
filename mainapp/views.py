@@ -8,6 +8,7 @@ from django.urls import reverse
 import pandas as pd
 import folium
 import utm
+import json
 from .forms import CreateUserForm
 
 def login_page(request):
@@ -38,30 +39,34 @@ def register(request):
             messages.success(request,'Account was created for '+ user)
             return redirect('login')
     context = {'form':form}
-    return render(request,'mainapp/register.html',context)
+    return render(request,'mainapp/interactivemap.html',context)
 
 
 def home(request):
     return render(request,'mainapp/home.html')
 
 def interactive_map(request):
-    return HttpResponse("interactive map")
+
+    return render(request,'mainapp/interactivemap.html')
 
 def route(request):
     return render(request,'mainapp/route.html')
 
-@login_required(login_url='login')
+#@login_required(login_url='login')
 def bicimad_ui(request):
-    return HttpResponse("bicimad_ui")
-
+    return HttpResponse('bicimadUI')
 
 def bicimad_status(request):
-    return HttpResponse("bicimad")
+    df=pd.read_csv('madrid.csv',delimiter=',')
+    df=df.to_dict(orient='records')
+    context={'my_list':json.dumps(df)}
+    return render(request,'mainapp/bicimad_map.html',context)
+
 
 def search_stop(request):
     if request.method=='POST':
         stop_number=request.POST.get('stop_number','')
-        return redirect(reverse('iRoute:stop_detail', kwargs={'stop_number': stop_number}))
+        return redirect(reverse('stop_detail', kwargs={'stop_number': stop_number}))
     return render(request,'mainapp/search_stop.html')
 
 def stop_detail(request, stop_number):
