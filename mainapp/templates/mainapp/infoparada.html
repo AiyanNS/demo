@@ -80,12 +80,12 @@
         </div>
         <!-- Agrega un formulario para guardar la parada a favoritos -->
         {% if user.is_authenticated %}
-            <form method="post" action="">
-                {% csrf_token %}
-                <button type="submit" {% if parada_guardada %}disabled{% endif %} class="{% if parada_guardada %}parada-guardada{% endif %}">
-                    {% if parada_guardada %}Ya añadido a favoritos{% else %}Guardar en favoritos{% endif %}
-                </button>
-            </form>
+        <form method="post" action="">
+            {% csrf_token %}
+            <button type="submit" {% if parada_guardada %}disabled{% endif %}>
+                {% if parada_guardada %}Ya añadido a favoritos{% else %}Guardar en favoritos{% endif %}
+            </button>
+        </form>
         {% endif %}
     </div>
     {% endblock %}

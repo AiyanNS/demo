@@ -49,22 +49,37 @@ def register(request):
 def home(request):
     return render(request,'mainapp/home.html')
 
+from django.shortcuts import get_object_or_404
+
 def busmap(request):
-    dfc = pd.read_csv("./EMT.csv")
-    # Reemplazar '6_' en la columna 'IDESTACION' y convertir a numérico
-    dfc['IDESTACION'] = dfc['IDESTACION'].str.replace('6_', '').astype(int)
-    # Usar la función ver_coordenadas para obtener las coordenadas
-    coordenadas = ver_coordenadas(dfc)
+    # Obtener todas las estaciones de la base de datos
+    estaciones = Estacion.objects.all()
     # Inicializar el mapa y el MarkerCluster
     mapa = folium.Map(location=[40.416775, -3.703790], zoom_start=12)
     marker_cluster = MarkerCluster().add_to(mapa)
-    # Agregar marcadores al MarkerCluster
-    for coord in coordenadas:
-        folium.Marker(location=coord).add_to(marker_cluster)
-    # Generar el HTML para el mapa
+    for estacion in estaciones:
+        latitud = estacion.latitude
+        longitud = estacion.longitude
+        id_estacion = estacion.IDESTACION
+        puntAcondicionamiento = estacion.ACONDICIONAMIENTOVIAJEROS
+        nombre = estacion.DENOMINACION
+        lineas = estacion.LINEAS
+        # Verificar si las coordenadas son válidas
+        if isinstance(latitud, (float, int)) and isinstance(longitud, (float, int)):
+            popup_content = f"<b>{nombre}</b><br>Lineas: {lineas}<br>Puntuación: {puntAcondicionamiento}"
+            # Agregar botones al popup
+            popup_content += f"<br><a href=\"/{id_estacion}\">Ver más</a>"
+            # Crear el contenido del popup
+            popup = folium.Popup(popup_content, max_width=300)
+            marker = folium.Marker(location=[latitud, longitud], popup=popup)
+            marker.add_to(marker_cluster)
     mapa_html = mapa._repr_html_()
     contexto = {'mapa_html': mapa_html}
     return render(request, 'mainapp/interactivemap.html', contexto)
+
+
+
+
 
 def route(request):
     return render(request,'mainapp/route.html')
@@ -110,29 +125,31 @@ def save_station(request, estacion_id):
 
 
 def search_stop(request):
+    user = request.user
     if request.method=='POST':
         stop_number=request.POST.get('stop_number','')
         return redirect(reverse('stop_detail', kwargs={'stop_number': stop_number}))
     return render(request,'mainapp/search_stop.html')
 
 def stop_detail(request, stop_number):
-    stop_number
-    station=Estacion.objects.get(IDESTACION=stop_number)
-    latitud=station.latitude
-    longitud=station.longitude
+    # Obten el ID del usuario autenticado
+    station = Estacion.objects.get(IDESTACION=stop_number)
+
     if station is not None:
+        latitud = station.latitude
+        longitud = station.longitude
         # Crear un mapa centrado en las coordenadas convertidas
         mapa = folium.Map(location=[latitud, longitud], zoom_start=15)
         # Agregar un marcador en las coordenadas
         folium.Marker([latitud, longitud]).add_to(mapa)
         mapa_html = mapa._repr_html_()
-        #Información extra sobre la parada
+        # Información extra sobre la parada
         nombre = station.DENOMINACION
         lineas = station.LINEAS
-        puntAcondicionamiento=station.ACONDICIONAMIENTOVIAJEROS
+        puntAcondicionamiento = station.ACONDICIONAMIENTOVIAJEROS
         puntAcondicionamiento = int(puntAcondicionamiento)
-        parada_guardada = savedStops.objects.filter(user=request.user, savedStop_id=stop_number).exists()
-        traffic,climate,accident,rush_hour,doy,dist,holliday,dow = 1,0,0,False,100,200,False,3
+        # parada_guardada = Estacion.objects.filter(savedStop_id=stop_number).exists()
+        traffic, climate, accident, rush_hour, doy, dist, holliday, dow = 1, 0, 0, False, 100, 200, False, 3
         result = get_prediction(traffic, climate, accident, rush_hour, doy, dist, holliday, dow)
         contexto = {
             'stop_number': stop_number,
@@ -141,22 +158,24 @@ def stop_detail(request, stop_number):
             'lineas': lineas,
             'puntAcondicionamiento': puntAcondicionamiento,
             'color_puntuacion': color_puntuacion(puntAcondicionamiento),
-            'parada_guardada': parada_guardada,
-            'delay':result
+            'delay': result,
         }
-                # Verificar si el usuario está autenticado antes de mostrar el botón de guardar
+        try:
+            saved_stop=savedStops.objects.get(user=request.user,savedStop_id=stop_number)
+            contexto['parada_guardada']=saved_stop
+        except: pass
         if request.user.is_authenticated:
-            saved_stop, created = savedStops.objects.get_or_create(
-                user=request.user,
-                savedStop_id=stop_number,
-            )
-            if not created:
-                messages.warning(request, 'Esta parada ya está en tus favoritos.')
-            contexto['saved_stop'] = saved_stop
+            if request.method=='POST':
+                saved_stop,created=savedStops.objects.get_or_create(user=request.user,savedStop_id=stop_number)
+                if created:
+                    contexto['parada_guardada'] = saved_stop
+        # Devolver la respuesta fuera de la condición
         return render(request, 'mainapp/infoparada.html', contexto)
     else:
-       mensaje_error = f"No se encontró información para la parada con ID {stop_number}."
-       return render(request, 'mainapp/error.html', {'mensaje_error': mensaje_error})
+        mensaje_error = f"No se encontró información para la parada con ID {stop_number}."
+        return render(request, 'mainapp/error.html', {'mensaje_error': mensaje_error})
+
+
 
 # Other functions
 def datosParada(dfl, idParada):
@@ -195,7 +214,7 @@ def ver_coordenadas(dfc):
     return coordenadas
 
 def get_prediction(traffic, climate, accident, rush_hour, doy, dist, holliday, dow):
-    model_filename = 'modelo_prediccion/xgboost_model.joblib'
+    model_filename = 'xgboost_model.joblib'
     loaded_model = joblib.load(model_filename)
     sample_input_params = np.array([[traffic, climate, accident, rush_hour, doy, dist, holliday, dow]])
     prediction = loaded_model.predict(sample_input_params)
