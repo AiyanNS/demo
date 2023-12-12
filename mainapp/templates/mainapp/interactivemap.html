@@ -1,49 +1,24 @@
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa de Marcadores</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-</head>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bus Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+    #map {
+        width: auto; /* Ancho de toda la ventana gráfica */
+        height: 80vh; /* Alto de toda la ventana gráfica */
+        margin: 5%;
+    }
+</style>
 {% extends 'mainapp/base.html' %}
-{% block title %}Mapa de Marcadores{% endblock %}
-
+{% load static %}
 {% block content %}
-    <div id="map" style="height: 70vh; margin: 5%;"></div>
+<body>
+    <div id="map">
+        {{ mapa_html|safe }}
+    </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</body>
+</html>
 
-    <script>
-        var map = L.map('map').setView([40.4168, -3.7038], 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-        var markersLayer = L.layerGroup().addTo(map);
-
-        var my_list = JSON.parse('{{ my_list|escapejs|safe }}');
-        console.log(my_list);
-
-        for (var i = 0; i < my_list.length; i++) {
-            var obj = my_list[i];
-            var marker = L.marker([obj.latitude, obj.longitude]);
-
-            markersLayer.addLayer(marker);
-
-            var popupContent = '<div>';
-            for (var key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    popupContent += '<p><strong>' + key + ':</strong> ' + obj[key] + '</p>';
-                }
-            }
-            popupContent += '</div>';
-
-            marker.bindPopup(popupContent).on('click', function () {
-                this.openPopup();
-            });
-        }
-
-        L.control.layers(null, { 'Marcadores': markersLayer }).addTo(map);
-    </script>
 {% endblock %}

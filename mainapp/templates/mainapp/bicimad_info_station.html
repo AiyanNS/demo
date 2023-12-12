@@ -1,0 +1,8 @@
+{% extends 'mainapp/base.html' %}
+{% block content %}
+    <h1>{{ bicimad_station.name }}</h1>
+    <p>Número: {{ bicimad_station.number }}</p>
+    <p>Dirección: {{ bicimad_station.address }}</p>
+    <p>Total de bases: {{ bicimad_station.total_bases }}</p>
+    <p>Bicicletas disponibles: {{ bicimad_station.dock_bikes }}</p>
+{% endblock %}

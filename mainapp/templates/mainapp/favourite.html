@@ -1,6 +1,117 @@
+<style>
+    .paradas-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;  /* Ajusta según sea necesario */
+    }
+
+    .parada-item {
+        width: 48%;  /* Ajusta según sea necesario */
+        border: 1px solid #ddd;  /* Agrega bordes según tus preferencias */
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+</style>
+
 {% extends 'mainapp/base.html' %}
 {% load static %}
 {% block content %}
+    <h1>Paradas Guardadas</h1>
+    {% if paradas_guardadas %}
+        <div class="paradas-container">
+            {% for parada in paradas_guardadas %}
+                <div class="parada-item">
+                    <a href="{% url 'stop_detail' stop_number=parada.savedStop.IDESTACION %}">
+                        <strong>{{ parada.savedStop.DENOMINACION }}</strong>
+                    </a>
+                    <p>Líneas: {{ parada.savedStop.LINEAS }}</p>
+                    <!-- Agrega más campos según sea necesario -->
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No tienes paradas guardadas.</p>
+    {% endif %}
 
+    <h1>Estaciones de Bicimad Guardadas</h1>
+    {% if estaciones_bicimad %}
+        <div class="bicimad-container">
+            {% for bicimad in estaciones_bicimad %}
+                <div class="bicimad-item">
+                    <!-- Nombre visible -->
+                    <div class="nombre-estacion" onclick="toggleInfo('{{ bicimad.id }}')">
+                        <strong>{{ bicimad.savedStation.name }}</strong>
+                    </div>
+                    <!-- Información oculta -->
+                    <div id="info-{{ bicimad.id }}" class="info-estacion" style="display: none;">
+                        <table class="info-table">
+                            <tr>
+                                <td class="label">Número:</td>
+                                <td>{{ bicimad.savedStation.number }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Dirección:</td>
+                                <td>{{ bicimad.savedStation.address }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Activate:</td>
+                                <td>{{ bicimad.savedStation.activate }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">No Available:</td>
+                                <td>{{ bicimad.savedStation.no_available }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Total Bases:</td>
+                                <td>{{ bicimad.savedStation.total_bases }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Dock Bikes:</td>
+                                <td>{{ bicimad.savedStation.dock_bikes }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Free Bases:</td>
+                                <td>{{ bicimad.savedStation.free_bases }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Reservations Count:</td>
+                                <td>{{ bicimad.savedStation.reservations_count }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No tienes estaciones de Bicimad guardadas.</p>
+    {% endif %}
 
+    <script>
+        function toggleInfo(estacionId) {
+            var infoDiv = document.getElementById('info-' + estacionId);
+            infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+    <style>
+        .bicimad-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .nombre-estacion {
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .info-table {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+    </style>
 {% endblock %}

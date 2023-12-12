@@ -14,18 +14,16 @@
 
     <script>
         var map = L.map('map').setView([40.4168, -3.7038], 13);
-
+    
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
-
+    
         var my_list = JSON.parse('{{ my_list|escapejs|safe }}');
-        console.log(my_list);  // Verifica si los datos se están pasando correctamente
-
+        console.log(my_list);
+    
         for (var i = 0; i < my_list.length; i++) {
             var obj = my_list[i];
-            console.log(obj.latitude, obj.longitude);  // Verifica si las coordenadas son válidas
-
             var marker = L.marker([obj.latitude, obj.longitude]).addTo(map);
             var popupContent = '<div>';
             for (var key in obj) {
@@ -33,8 +31,20 @@
                     popupContent += '<p><strong>' + key + ':</strong> ' + obj[key] + '</p>';
                 }
             }
+    
+            // Agrega el botón de guardar estación
+            var estacionId = obj.id;  // Asegúrate de que el campo 'id' esté disponible en tus datos
+            popupContent += '<p><button onclick="guardarEstacion(' + estacionId + ')">Guardar Estación</button></p>';
+    
             popupContent += '</div>';
             marker.bindPopup(popupContent);
         }
+    
+        // Función para llamar a la vista de Django para guardar la estación
+        function guardarEstacion(estacionId) {
+            var url = '/bicimad/' + estacionId + '/';
+            window.location.href = url;
+        }
     </script>
+    
 {% endblock %}

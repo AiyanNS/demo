@@ -44,7 +44,15 @@
             font-size: 24px;
             margin: 20px; /* Ajusta el espacio alrededor del círculo */
         }
-        
+
+        .parada-guardada {
+            background-color: #888; /* Color de fondo oscuro para indicar que ya está guardado */
+            cursor: not-allowed; /* Cambiar el cursor para indicar que el botón está deshabilitado */
+            opacity: 0.8; /* Reducir la opacidad para indicar visualmente que está deshabilitado */
+        }
+
+</style>
+
     </style>
 </head>
 {% extends 'mainapp/base.html' %}
@@ -68,8 +76,17 @@
                     </span>
                 </p>
             {% endif %}
-            <p>Tiempo de espera: <span id="infoRT">{{ text }}</span></p>
+            <p><span id="infoRT">{{ delay }}</span></p>
         </div>
+        <!-- Agrega un formulario para guardar la parada a favoritos -->
+        {% if user.is_authenticated %}
+            <form method="post" action="">
+                {% csrf_token %}
+                <button type="submit" {% if parada_guardada %}disabled{% endif %} class="{% if parada_guardada %}parada-guardada{% endif %}">
+                    {% if parada_guardada %}Ya añadido a favoritos{% else %}Guardar en favoritos{% endif %}
+                </button>
+            </form>
+        {% endif %}
     </div>
     {% endblock %}
     

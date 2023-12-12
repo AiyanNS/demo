@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -26,6 +27,14 @@ class Estacion(models.Model):
     LINEAS = models.CharField(max_length=255)
     longitude = models.FloatField()
     latitude = models.FloatField()
-
+    ACONDICIONAMIENTOVIAJEROS=models.IntegerField()
     def __str__(self):
         return f"{self.IDESTACION} - {self.DENOMINACION}"
+    
+class savedBICIMAD(models.Model):
+    user=models.ForeignKey(User,null=True,on_delete=models.SET_NULL)
+    savedStation=models.ForeignKey(BicimadStation,null=True,on_delete=models.SET_NULL)
+
+class savedStops(models.Model):
+    user=models.ForeignKey(User,null=True,on_delete=models.SET_NULL)
+    savedStop=models.ForeignKey(Estacion,null=True,on_delete=models.SET_NULL)
